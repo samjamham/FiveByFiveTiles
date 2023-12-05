@@ -7,10 +7,14 @@ public class Sleep : MonoBehaviour
     [SerializeField]
     private CanvasGroup AlphaController;
 
+    [SerializeField]
+    private ChangeCube m_ChangeCube;
+
     private float Alpha = 0;
 
     private void Start()
     {
+        m_ChangeCube.StartUp();
         this.gameObject.SetActive(false);
     }
     private void OnEnable()

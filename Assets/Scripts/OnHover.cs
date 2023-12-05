@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class OnHover : MonoBehaviour
 {
     [SerializeField]
     private GameObject UIToShow;
 
-    private void OnMouseEnter()
+
+    private void OnMouseOver()
     {
         if (!transform.parent.GetComponent<FlipAndChange>().IsMidFlip)
             GetComponent<Outline>().enabled = true;
@@ -18,9 +20,12 @@ public class OnHover : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (!transform.parent.GetComponent<FlipAndChange>().IsMidFlip)
+        if (GetComponent<Outline>().enabled && EventSystem.current.IsPointerOverGameObject() == false)
         {
-            UIToShow.GetComponentInChildren<ChangeCube>().SetCube(this.transform.parent.gameObject);
+            UIToShow.GetComponentInChildren<ChangeCube>().SetCube(this.transform.parent.gameObject, 
+                transform.parent.GetComponent<FlipAndChange>().GetTerrainType(),
+                transform.parent.GetComponent<FlipAndChange>().GetImprovementType());
+
             UIToShow.SetActive(false);
             UIToShow.SetActive(true);
         }
@@ -31,6 +36,4 @@ public class OnHover : MonoBehaviour
     {
         UIToShow = NewUI;
     }
-
-
 }

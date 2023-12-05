@@ -8,19 +8,24 @@ public class FlipAndChange : MonoBehaviour
     private GameObject UIToShow;
 
 
-    bool ToDestroy = false;
-    GameObject CurrentMesh;
+    private bool ToDestroy = false;
+    //private GameObject CurrentMesh;
+    private int TerrainType = -1;
+    private int ImprovementType = -1;
     public bool IsMidFlip { private set; get; } = false;
 
     private float DesiredAngle = 0;
     float r;
 
-    public void NewMeshSelected(GameObject InMesh)
+    public void NewMeshSelected(int NewTerrain, int NewImprovment)
     {
-        if(InMesh != CurrentMesh && !IsMidFlip)
+        if(NewTerrain != TerrainType 
+            || NewImprovment != ImprovementType
+            && !IsMidFlip)
         {
-            CurrentMesh = InMesh;
-            GameObject NewMesh = Instantiate(InMesh, this.transform.position, this.transform.rotation);
+            TerrainType = NewTerrain;
+            ImprovementType = NewImprovment;
+            GameObject NewMesh = Instantiate(GetComponentInParent<ListOfTerrains>().TypesOfCube2D[NewTerrain,NewImprovment], this.transform.position, this.transform.rotation);
             NewMesh.transform.localRotation = Quaternion.Euler(0, 0, 180);
             NewMesh.transform.SetParent(this.transform);
             NewMesh.GetComponent<OnHover>().SetUI(UIToShow);
@@ -49,5 +54,14 @@ public class FlipAndChange : MonoBehaviour
             return true;
         else
             return false;
+    }
+
+    public int GetTerrainType()
+    {
+        return TerrainType;
+    }
+    public int GetImprovementType()
+    {
+        return ImprovementType;
     }
 }

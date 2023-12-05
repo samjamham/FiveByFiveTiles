@@ -12,8 +12,10 @@ public class RandomStart : MonoBehaviour
     {
        for (int i = 0; i < Cubes.Length; i++)
         {
-            RandomCubes.SetCube(Cubes[i]);
-            RandomCubes.NewCubeSelected(Random.Range(0, 8));
+            int type = Random.Range(0, 6);
+            int NoImporvement = 0; // 0 represents no improvement
+            RandomCubes.SetCube(Cubes[i], type, NoImporvement); 
+            RandomCubes.NewCubeSelected((type.ToString() + "0"));
         }
     }
 }
