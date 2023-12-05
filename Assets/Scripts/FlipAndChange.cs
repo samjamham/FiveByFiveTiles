@@ -64,4 +64,8 @@ public class FlipAndChange : MonoBehaviour
     {
         return ImprovementType;
     }
+    public void SetUI(GameObject NewUI)
+    {
+        UIToShow = NewUI;
+    }
 }
