@@ -5,20 +5,19 @@ using UnityEngine;
 
 
 
-public class TypeControl : MonoBehaviour
+public class TypeControl
 {
-    [SerializeField]
-    private GameObject[] TypesOfCube;
-    private int SelectedImprovement = 0;
+    //[SerializeField]
+    //private GameObject[] TypesOfCube;
+    //private int SelectedImprovement = 0;
 
-    public void SetImprovement(int Ref)
-    {
-        SelectedImprovement = Ref;
-    }
+    //public void SetImprovement(int Ref)
+    //{
+    //    SelectedImprovement = Ref;
+    //}
 
-    public int GetImprovement()
-    {
-        return SelectedImprovement;
-    }
-
+    //public int GetImprovement()
+    //{
+    //    return SelectedImprovement;
+    //}
 }
