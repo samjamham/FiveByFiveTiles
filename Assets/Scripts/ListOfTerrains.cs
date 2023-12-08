@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ListOfTerrains : MonoBehaviour
 {
-    [SerializeField]
-    public GameObject[] TypesOfCube;
+    //[SerializeField]
+    //public GameObject[] TypesOfCube;
 
     [SerializeField]
     public GameObject[,] TypesOfCube2D;
@@ -22,6 +22,7 @@ public class ListOfTerrains : MonoBehaviour
         TypesOfCube2D[1,0] = Resources.Load("1_0_Desert") as GameObject;
 
         TypesOfCube2D[2,0] = Resources.Load("2_0_Hills") as GameObject;
+        TypesOfCube2D[2,1] = Resources.Load("2_1_Hills_Mine") as GameObject;
 
         TypesOfCube2D[3,0] = Resources.Load("3_0_Moutains") as GameObject;
 
