@@ -13,6 +13,7 @@ public class WalkerGenerator : MonoBehaviour
 
     //Variables
     private Grid[,] WalkerGrid;
+    private int[,] NoiseArray;
     private List<WalkerObject> Walkers;
 
 
@@ -39,6 +40,8 @@ public class WalkerGenerator : MonoBehaviour
     {
         WalkerGrid = new Grid[MapWidth, MapHeight];
         Walkers = new List<WalkerObject>();
+        VoronoiNoise Noise = new VoronoiNoise();
+        NoiseArray = Noise.GenerateNew(MapWidth,MapHeight, FillPercentage);
 
         Vector2Int TileCenter = new Vector2Int(WalkerGrid.GetLength(0) / 2, WalkerGrid.GetLength(1) / 2);
 
@@ -50,6 +53,7 @@ public class WalkerGenerator : MonoBehaviour
         TileCount++;
 
         CreateFloors();
+       
     }
 
     Vector2 GetDirection()
@@ -195,8 +199,8 @@ public class WalkerGenerator : MonoBehaviour
         NewMesh.transform.SetParent(GameMap.transform);
         NewMesh.GetComponent<FlipAndChange>().SetUI(UIToShow);
         NewMesh.GetComponentInChildren<OnHover>().SetUI(UIToShow);
-        int type = Random.Range(0, 6);
-        //int type = PerlinGrid[(int)Noise.x, (int)Noise.y];
+        //int type = Random.Range(0, 6);
+        int type = NoiseArray[(int)Noise.x, (int)Noise.y];
         int NoImporvement = 0; // 0 represents no improvement
         CubeController.SetCube(NewMesh, type, NoImporvement);
         CubeController.NewCubeSelected((type.ToString() + "0"));
