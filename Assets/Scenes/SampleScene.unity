@@ -9019,11 +9019,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84da3108a84d1ee468e3bfce5880b5f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapWidth: 20
-  MapHeight: 20
+  MapWidth: 40
+  MapHeight: 40
   MaximumWalkers: 10
   TileCount: 0
-  FillPercentage: 0.4
+  FillPercentage: 0.1
   WaitTime: 0
   CubePrefab: {fileID: 8872139650487555529, guid: 430700e228620b74684318e796588af0,
     type: 3}

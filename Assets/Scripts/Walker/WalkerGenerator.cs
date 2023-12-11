@@ -6,13 +6,13 @@ public class WalkerGenerator : MonoBehaviour
 {
     public enum Grid
     {
+        EMPTY,
         FLOOR,
-        WALL,
-        EMPTY
+        WALL        
     }
 
     //Variables
-    private Grid[,] gridHandler;
+    private Grid[,] WalkerGrid;
     private List<WalkerObject> Walkers;
 
 
@@ -37,28 +37,19 @@ public class WalkerGenerator : MonoBehaviour
 
     void InitializeGrid()
     {
-        gridHandler = new Grid[MapWidth, MapHeight];
-
-        for (int x = 0; x < gridHandler.GetLength(0); x++)
-        {
-            for (int y = 0; y < gridHandler.GetLength(1); y++)
-            {
-                gridHandler[x, y] = Grid.EMPTY;
-            }
-        }
-
+        WalkerGrid = new Grid[MapWidth, MapHeight];
         Walkers = new List<WalkerObject>();
 
-        Vector3Int TileCenter = new Vector3Int(gridHandler.GetLength(0) / 2, gridHandler.GetLength(1) / 2, 0);
+        Vector2Int TileCenter = new Vector2Int(WalkerGrid.GetLength(0) / 2, WalkerGrid.GetLength(1) / 2);
 
         WalkerObject curWalker = new WalkerObject(new Vector2(TileCenter.x, TileCenter.y), GetDirection(), 0.5f);
-        gridHandler[TileCenter.x, TileCenter.y] = Grid.FLOOR;
-        GenerateNewTile(new Vector2(TileCenter.x * 2 - MapWidth, TileCenter.y * 2 - MapHeight));
+        WalkerGrid[TileCenter.x, TileCenter.y] = Grid.FLOOR;
+        GenerateNewTile(new Vector2(TileCenter.x * 2 - MapWidth, TileCenter.y * 2 - MapHeight), TileCenter);
         Walkers.Add(curWalker);
 
         TileCount++;
 
-        StartCoroutine(CreateFloors());
+        CreateFloors();
     }
 
     Vector2 GetDirection()
@@ -80,21 +71,19 @@ public class WalkerGenerator : MonoBehaviour
         }
     }
 
-    IEnumerator CreateFloors()
+    void CreateFloors()
     {
-        while ((float)TileCount / (float)gridHandler.Length < FillPercentage)
+        while ((float)TileCount / (float)WalkerGrid.Length < FillPercentage)
         {
-            bool hasCreatedFloor = false;
             foreach (WalkerObject curWalker in Walkers)
             {
-                Vector3Int curPos = new Vector3Int((int)curWalker.Position.x, (int)curWalker.Position.y, 0);
+                Vector2Int curPos = new Vector2Int((int)curWalker.Position.x, (int)curWalker.Position.y);
 
-                if (gridHandler[curPos.x, curPos.y] != Grid.FLOOR)
+                if (WalkerGrid[curPos.x, curPos.y] != Grid.FLOOR)
                 {
-                    GenerateNewTile(new Vector2(curPos.x * 2 - MapWidth, curPos.y * 2 - MapHeight));
+                    GenerateNewTile(new Vector2(curPos.x * 2 - MapWidth, curPos.y * 2 - MapHeight), curPos);
                     TileCount++;
-                    gridHandler[curPos.x, curPos.y] = Grid.FLOOR;
-                    hasCreatedFloor = true;
+                    WalkerGrid[curPos.x, curPos.y] = Grid.FLOOR;
                 }
             }
 
@@ -103,14 +92,8 @@ public class WalkerGenerator : MonoBehaviour
             ChanceToRedirect();
             ChanceToCreate();
             UpdatePosition();
-
-            if (hasCreatedFloor)
-            {
-                yield return new WaitForSeconds(WaitTime);
-            }
         }
-
-        StartCoroutine(CreateWalls());
+        CreateWalls();
     }
 
     void ChanceToRemove()
@@ -161,63 +144,59 @@ public class WalkerGenerator : MonoBehaviour
         {
             WalkerObject FoundWalker = Walkers[i];
             FoundWalker.Position += FoundWalker.Direction;
-            FoundWalker.Position.x = Mathf.Clamp(FoundWalker.Position.x, 1, gridHandler.GetLength(0) - 2);
-            FoundWalker.Position.y = Mathf.Clamp(FoundWalker.Position.y, 1, gridHandler.GetLength(1) - 2);
+            FoundWalker.Position.x = Mathf.Clamp(FoundWalker.Position.x, 1, WalkerGrid.GetLength(0) - 2);
+            FoundWalker.Position.y = Mathf.Clamp(FoundWalker.Position.y, 1, WalkerGrid.GetLength(1) - 2);
             Walkers[i] = FoundWalker;
         }
     }
 
-    IEnumerator CreateWalls()
+    void CreateWalls()
     {
-        for (int x = 0; x < gridHandler.GetLength(0) - 1; x++)
+        for (int x = 0; x < WalkerGrid.GetLength(0) - 1; x++)
         {
-            for (int y = 0; y < gridHandler.GetLength(1) - 1; y++)
+            for (int y = 0; y < WalkerGrid.GetLength(1) - 1; y++)
             {
-                if (gridHandler[x, y] == Grid.FLOOR)
+                if (WalkerGrid[x, y] == Grid.FLOOR)
                 {
                     bool hasCreatedWall = false;
 
-                    if (gridHandler[x + 1, y] == Grid.EMPTY)
+                    if (WalkerGrid[x + 1, y] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2((x + 1) * 2 - MapWidth, y * 2 - MapHeight));
-                        gridHandler[x + 1, y] = Grid.WALL;
+                        WalkerGrid[x + 1, y] = Grid.WALL;
                         hasCreatedWall = true;
                     }
-                    if (gridHandler[x - 1, y] == Grid.EMPTY)
+                    if (WalkerGrid[x - 1, y] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2((x - 1) * 2 - MapWidth, y  * 2 - MapHeight));                        
-                        gridHandler[x - 1, y] = Grid.WALL;
+                        WalkerGrid[x - 1, y] = Grid.WALL;
                         hasCreatedWall = true;
                     }
-                    if (gridHandler[x, y + 1] == Grid.EMPTY)
+                    if (WalkerGrid[x, y + 1] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2(x * 2 - MapWidth, (y + 1) * 2 - MapHeight));
-                        gridHandler[x, y + 1] = Grid.WALL;
+                        WalkerGrid[x, y + 1] = Grid.WALL;
                         hasCreatedWall = true;
                     }
-                    if (gridHandler[x, y - 1] == Grid.EMPTY)
+                    if (WalkerGrid[x, y - 1] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2(x * 2 - MapWidth, (y - 1) * 2 - MapHeight));
-                        gridHandler[x, y - 1] = Grid.WALL;
+                        WalkerGrid[x, y - 1] = Grid.WALL;
                         hasCreatedWall = true;
-                    }
-
-                    if (hasCreatedWall)
-                    {
-                        yield return new WaitForSeconds(WaitTime);
-                    }
+                    }                    
                 }
             }
         }
     }
 
-    void GenerateNewTile(Vector2 Pos)
+    void GenerateNewTile(Vector2 Pos, Vector2 Noise)
     {
         GameObject NewMesh = Instantiate(CubePrefab, new Vector3(Pos.x, 0, Pos.y), Quaternion.identity);
         NewMesh.transform.SetParent(GameMap.transform);
         NewMesh.GetComponent<FlipAndChange>().SetUI(UIToShow);
         NewMesh.GetComponentInChildren<OnHover>().SetUI(UIToShow);
         int type = Random.Range(0, 6);
+        //int type = PerlinGrid[(int)Noise.x, (int)Noise.y];
         int NoImporvement = 0; // 0 represents no improvement
         CubeController.SetCube(NewMesh, type, NoImporvement);
         CubeController.NewCubeSelected((type.ToString() + "0"));
