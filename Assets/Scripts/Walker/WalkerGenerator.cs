@@ -41,24 +41,40 @@ public class WalkerGenerator : MonoBehaviour
         WalkerGrid = new Grid[MapWidth, MapHeight];
         Walkers = new List<WalkerObject>();
         VoronoiNoise Noise = new VoronoiNoise();
-        NoiseArray = Noise.GenerateNew(MapWidth,MapHeight, FillPercentage);
+        NoiseArray = Noise.GenerateNew(MapWidth, MapHeight, FillPercentage);        
 
         Vector2Int TileCenter = new Vector2Int(WalkerGrid.GetLength(0) / 2, WalkerGrid.GetLength(1) / 2);
+        for (int i = 0; i <4; i++)
+        {
+            WalkerObject curWalker = new WalkerObject(new Vector2(TileCenter.x, TileCenter.y), GetDirection(i), 0.5f);
+            Walkers.Add(curWalker);
+        }
+        
 
-        WalkerObject curWalker = new WalkerObject(new Vector2(TileCenter.x, TileCenter.y), GetDirection(), 0.5f);
-        WalkerGrid[TileCenter.x, TileCenter.y] = Grid.FLOOR;
-        GenerateNewTile(new Vector2(TileCenter.x * 2 - MapWidth, TileCenter.y * 2 - MapHeight), TileCenter);
-        Walkers.Add(curWalker);
 
-        TileCount++;
+        CreateFloors();       
+    }
 
-        CreateFloors();
-       
+    Vector2 GetDirection(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                return Vector2.down;
+            case 1:
+                return Vector2.left;
+            case 2:
+                return Vector2.up;
+            case 3:
+                return Vector2.right;
+            default:
+                return Vector2.zero;
+        }
     }
 
     Vector2 GetDirection()
     {
-        int choice = Mathf.FloorToInt(UnityEngine.Random.value * 3.99f);
+        int choice = Random.Range(0,4);
 
         switch (choice)
         {
@@ -162,31 +178,25 @@ public class WalkerGenerator : MonoBehaviour
             {
                 if (WalkerGrid[x, y] == Grid.FLOOR)
                 {
-                    bool hasCreatedWall = false;
-
                     if (WalkerGrid[x + 1, y] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2((x + 1) * 2 - MapWidth, y * 2 - MapHeight));
                         WalkerGrid[x + 1, y] = Grid.WALL;
-                        hasCreatedWall = true;
                     }
                     if (WalkerGrid[x - 1, y] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2((x - 1) * 2 - MapWidth, y  * 2 - MapHeight));                        
                         WalkerGrid[x - 1, y] = Grid.WALL;
-                        hasCreatedWall = true;
                     }
                     if (WalkerGrid[x, y + 1] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2(x * 2 - MapWidth, (y + 1) * 2 - MapHeight));
                         WalkerGrid[x, y + 1] = Grid.WALL;
-                        hasCreatedWall = true;
                     }
                     if (WalkerGrid[x, y - 1] == Grid.EMPTY)
                     {
                         GenerateNewEdge(new Vector2(x * 2 - MapWidth, (y - 1) * 2 - MapHeight));
                         WalkerGrid[x, y - 1] = Grid.WALL;
-                        hasCreatedWall = true;
                     }                    
                 }
             }

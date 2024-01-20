@@ -26,7 +26,8 @@ public class FlipAndChange : MonoBehaviour
             TerrainType = NewTerrain;
             ImprovementType = NewImprovment;
             GameObject NewMesh = Instantiate(GetComponentInParent<ListOfTerrains>().TypesOfCube2D[NewTerrain,NewImprovment], this.transform.position, this.transform.rotation);
-            NewMesh.transform.localRotation = Quaternion.Euler(0, 0, 180);
+            int randomRotation = Random.Range(0, 4) * 90;
+            NewMesh.transform.localRotation = Quaternion.Euler(0, randomRotation, 180);
             NewMesh.transform.SetParent(this.transform);
             NewMesh.GetComponent<OnHover>().SetUI(UIToShow);
             DesiredAngle += 185f;
